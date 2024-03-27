@@ -1,7 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import Button from '../controls/Button';
+import ModalHeader from './components/ModalHeader';
+import ModalFooter from './components/ModalFooter';
 
 interface IModalProps {
   open: boolean;
@@ -55,38 +56,19 @@ const Modal = (props: IModalProps) => {
       <div className="os-modal-mask" />
       <div className={classesWrap} style={styles}>
         {/* header */}
-        <header>
-          <h3>{title}</h3>
-          {/* <Button type="icon" icon={<CloseOutline />} onClick={onClose} /> */}
-          <div className="os-modal-icon">
-            {closeIcon !== null && (
-              <Button type="icon" onClick={onClose}>
-                닫기
-              </Button>
-            )}
-          </div>
-        </header>
+        <ModalHeader title={title} closeIcon={closeIcon} onClose={onClose} />
         {/* contents */}
         <section>{children}</section>
         {/* footer */}
         {footer !== null && (
-          <footer className={className}>
-            {okText && (
-              <Button size="small" type="primary" onClick={onOk}>
-                {okText}
-              </Button>
-            )}
-            {cancelText && (
-              <Button size="small" onClick={onCancel}>
-                {cancelText}
-              </Button>
-            )}
-            {deleteText && (
-              <Button size="small" type="primary" danger onClick={onDelete}>
-                {deleteText}
-              </Button>
-            )}
-          </footer>
+          <ModalFooter
+            okText={okText}
+            cancelText={cancelText}
+            deleteText={deleteText}
+            onOk={onOk}
+            onCancel={onCancel}
+            onDelete={onDelete}
+          />
         )}
       </div>
     </div>

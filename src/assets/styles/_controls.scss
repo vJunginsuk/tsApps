@@ -17,12 +17,7 @@
   @include mix.fade-in;
 
   &:hover {
-    &:not(
-        .os-btn-outline-disabled,
-        .os-btn-outline-danger,
-        .os-btn-primary,
-        .os-btn-text
-      ) {
+    &:not(.os-btn-outline-disabled, .os-btn-outline-danger, .os-btn-primary, .os-btn-text) {
       border-color: var.$btn-outline-border__hover;
       color: var.$btn-outline-font__hover;
       > .os-btn-svg {
@@ -33,12 +28,7 @@
       }
     }
   }
-  &:not(
-      .os-btn-outline-disabled,
-      .os-btn-outline-danger,
-      .os-btn-primary,
-      .os-btn-text
-    ) {
+  &:not(.os-btn-outline-disabled, .os-btn-outline-danger, .os-btn-primary, .os-btn-text) {
     &:active {
       border-color: var.$btn-outline-border__active;
       color: var.$btn-outline-font__active;
@@ -268,5 +258,15 @@
   &-icon {
     position: absolute;
     right: -4px;
+  }
+}
+
+.os-dialog {
+  // os-dialog-mask
+  &-mask {
+    background-color: transparent;
+  }
+  &-wrap {
+    top: 20%;
   }
 }

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
 import { createRoot } from 'react-dom/client';
 
-import Modal from './Modal';
 import { IConfirmProps, IDialogFactory, IWarningConfig } from '../../interfaces/props.interface';
+import ModalHeader from './components/ModalHeader';
+import ModalFooter from './components/ModalFooter';
 
 // hook
 const useModal = (isVisible: boolean): [boolean, React.Dispatch<React.SetStateAction<boolean>>] => {
@@ -16,7 +16,6 @@ const useModal = (isVisible: boolean): [boolean, React.Dispatch<React.SetStateAc
 };
 
 export const destroyFns: Array<() => void> = [];
-console.log('destroyFns', destroyFns);
 
 export const destroyAll = () => {
   while (destroyFns.length) {
@@ -47,18 +46,13 @@ export const factory = ({ Component, ...config }: IDialogFactory) => {
   };
 
   const destroy = ({ ...config }: IDialogFactory) => {
-    // eslint-disable-next-line react/no-deprecated
-    const unmountResult = ReactDOM.unmountComponentAtNode(div);
-    if (unmountResult && div.parentNode) {
+    if (div.parentNode) {
       div.parentNode.removeChild(div);
+      root.unmount;
     }
-
     if (typeof config.onClosed === 'function') {
       config.onClosed();
-
-      //document.getElementById(portalId)?.remove();
     }
-
     for (let i = 0; i < destroyFns.length; i += 1) {
       const fn = destroyFns[i];
       if (fn === close) {
@@ -67,6 +61,7 @@ export const factory = ({ Component, ...config }: IDialogFactory) => {
       }
     }
   };
+
   const render = ({ ...config }: IDialogFactory) => {
     setTimeout(() => {
       return Component ? root.render(<Component {...config} />) : new Error('컴포넌트가 없습니다.');
@@ -92,7 +87,9 @@ export const factory = ({ Component, ...config }: IDialogFactory) => {
         destroy(config);
       },
     };
+
     render(config);
+    console.log('config', config);
   };
   render(currentConfig);
   destroyFns.push(close);
@@ -116,39 +113,36 @@ const Confirm = ({
   message = '',
 }: IConfirmProps) => {
   const [isOpen, setIsOpen] = useModal(isVisible);
-
+  const onClosedHandler = () => {
+    onClosed();
+    afterClose();
+  };
   const onClickCloseHandler = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     onClickClose(event);
     setIsOpen(false);
+    onClosedHandler();
   };
 
   const onOkHandler = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     onClickOk(event);
     setIsOpen(false);
-  };
-
-  const onClosedHandler = () => {
-    onClosed();
-    afterClose();
+    onClosedHandler();
   };
 
   return (
-    <Modal
-      open={isOpen}
-      // toggle={toggle}
-      onClose={onClosedHandler}
-      className="modalDialog"
-      contentClassName="modalContent"
-      data-testid="modal-confirm"
-      title={title}
-      onOk={onOkHandler}
-      okText={confirmButtonText}
-      onCancel={onClickCloseHandler}
-      cancelText={cancelButtonText}
-      closeIcon={null}
-    >
-      {message}
-    </Modal>
+    <div className={isOpen ? 'os-modal' : 'os-hide'}>
+      <div className="os-modal-mask os-dialog-mask" />
+      <div className="os-modal-wrap os-dialog-wrap">
+        <ModalHeader title={title} closeIcon={null} />
+        <p>{message}</p>
+        <ModalFooter
+          onOk={onOkHandler}
+          okText={confirmButtonText}
+          onCancel={onClickCloseHandler}
+          cancelText={cancelButtonText}
+        />
+      </div>
+    </div>
   );
 };
 
